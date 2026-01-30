@@ -3,7 +3,7 @@ Tools command for CAI REPL.
 This module provides commands for displaying available tools.
 """
 
-import inspect
+import asyncio
 from typing import List, Optional, Any, Dict
 
 from rich.console import Console
@@ -103,16 +103,22 @@ class ToolsCommand(Command):
             return False
         
         # Get agent tools
-        import asyncio
         try:
-            tools = asyncio.get_event_loop().run_until_complete(
-                self._get_agent_tools(agent)
-            )
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # If loop is already running, we can't use run_until_complete
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(
+                        asyncio.run, 
+                        self._get_agent_tools(agent)
+                    )
+                    tools = future.result()
+            else:
+                tools = loop.run_until_complete(self._get_agent_tools(agent))
         except RuntimeError:
-            # If there's no event loop, create one
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            tools = loop.run_until_complete(self._get_agent_tools(agent))
+            # If there's no event loop, use asyncio.run which handles loop creation and cleanup
+            tools = asyncio.run(self._get_agent_tools(agent))
         
         if not tools:
             console.print(f"[yellow]Agent '{agent.name}' has no tools available.[/yellow]")
