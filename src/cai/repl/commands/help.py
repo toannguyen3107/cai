@@ -99,6 +99,7 @@ class HelpCommand(Command):
         self.add_subcommand("mcp", "Display help for Model Context Protocol", self.handle_mcp)
         self.add_subcommand("platform", "Display help for platform commands", self.handle_platform)
         self.add_subcommand("shell", "Display help for shell commands", self.handle_shell)
+        self.add_subcommand("tools", "Display help for tools command", self.handle_tools_help)
         
         # Utilities
         self.add_subcommand("model", "Display help for model selection", self.handle_model)
@@ -241,6 +242,30 @@ class HelpCommand(Command):
                 "directory\n"
                 "• [green]/! pwd[/green] - Show current working directory",
                 title="Shell Commands",
+                border_style="blue",
+            )
+        )
+        return True
+
+    def handle_tools_help(self, _: Optional[List[str]] = None) -> bool:
+        """Show help for tools command."""
+        console.print(
+            Panel(
+                "The tools command displays all available tools for the current agent.\n\n"
+                "[bold]Available Commands:[/bold]\n"
+                "• [yellow]/tools[/yellow] - Display all tools in a table format\n"
+                "• [yellow]/t[/yellow] - Shorthand for /tools\n\n"
+                "[bold]Table Columns:[/bold]\n"
+                "• [cyan]Tool Name[/cyan] - The name of the tool\n"
+                "• [cyan]Params[/cyan] - The parameters accepted by the tool\n"
+                "• [cyan]Tool Purpose[/cyan] - Description of what the tool does\n\n"
+                "[bold]Examples:[/bold]\n"
+                "• [green]/tools[/green] - Show all tools for the current agent\n"
+                "• [green]/t[/green] - Same as /tools (using alias)\n\n"
+                "[bold]Note:[/bold]\n"
+                "You must have an active agent selected to view its tools.\n"
+                "Use [yellow]/agent select <name>[/yellow] to select an agent first.",
+                title="Tools Command",
                 border_style="blue",
             )
         )

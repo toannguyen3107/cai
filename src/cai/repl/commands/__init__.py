@@ -33,6 +33,7 @@ from cai.repl.commands import (  # pylint: disable=import-error,unused-import,li
     quickstart,  # Add the quickstart command
     run,  # Add the run command for parallel mode
     shell,
+    tools,  # Add the tools command
     virtualization,
     workspace,
 )
